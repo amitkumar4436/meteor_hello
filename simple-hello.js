@@ -92,7 +92,7 @@ Meteor.methods({
 deleteTask: function (taskId){
   var task =Tasks.findOne(taskId);
   if(task.private && task.owner !== Meteor.userId()) {
-    thrown new Meteor.Error("not-authorized");
+    throw new Meteor.Error("not-authorized");
   }
   Tasks.remove(taskId);
 },
@@ -101,7 +101,7 @@ setChecked: function (taskId, setChecked) {
   if (task.private && task.owner !== Meteor.userId()) {
     throw new Meteor.Error("not-authorized");
   }
-  Tasks.update(taskId, { $set: { checked: setChecked}});
+  Tasks.update(taskId, { $set: { checked: setChecked} });
 },
 setPrivate: function (taskId, setToPrivate) {
   var task = Tasks.findOne(taskId); 
@@ -109,22 +109,19 @@ setPrivate: function (taskId, setToPrivate) {
   if (task.owner !== Meteor.userId()) {
     throw new Meteor.Error("not-authorized");
 }
-Tasks.update(taskId { $set: { private: setToPrivate } });
+Tasks.update(taskId, { $set: { private: setToPrivate } });
 }
 });
 
+
 if (Meteor.isServer) {
   //this code runs on the server
-  Meteor.publish("tasks", funtion () {
+  Meteor.publish("tasks", function () {
     return Tasks.find( {
       $or: [
       { private: {$ne: true} },
       { owner: this.userId }
       ]
   });
-  });
-}
- /* Meteor.startup(function () {
-    // code to run on server at startup
   });
 }
